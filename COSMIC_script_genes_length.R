@@ -57,3 +57,130 @@ SV_OTHER_cancers_cosmic_bed <- data.frame(Other_SV_carcinoma.bed[,c(2:4,5,1,6)])
 SV_OTHER_cancers_cosmic_bed$Strand <- rep("+",nrow(SV_OTHER_cancers_cosmic_bed))
 write.table(SV_OTHER_cancers_cosmic_bed, file="SV_OTHER_cancers_cosmic.bed", sep="\t", quote = F, row.names = F, col.names = F)
 #table(SV_OTHER_cancers_cosmic_bed$Strand)
+
+#SV intersect with genes
+SV_gene_sizes_intersect <- na.omit(readr::read_tsv("SV_gene_sizes_intersect.bed", col_names = F))
+View(SV_gene_sizes_intersect)
+gene <- SV_gene_sizes_intersect$X4
+gene_length <- SV_gene_sizes_intersect$X3-SV_gene_sizes_intersect$X2
+Cancer_group <- SV_gene_sizes_intersect$X7
+SV_per_gene <- SV_gene_sizes_intersect$X8
+SV_gene_sizes_intersect <- data.frame(cbind(gene, gene_length, Cancer_group, SV_per_gene))
+SV_gene_sizes_intersect$gene_length <- as.numeric(SV_gene_sizes_intersect$gene_length)
+SV_gene_sizes_intersect$SV_per_gene <- as.numeric(SV_gene_sizes_intersect$SV_per_gene)
+str(SV_gene_sizes_intersect)
+#View(SV_gene_sizes_intersect)
+SV_gene_sizes_intersect <- SV_gene_sizes_intersect %>% group_by(gene, Cancer_group) %>% summarise(gene_length=sum(gene_length), SV_per_gene=sum(SV_per_gene))
+GC_ind <- seq(1,nrow(SV_gene_sizes_intersect),2)
+Other_ind <- seq(2,nrow(SV_gene_sizes_intersect),2)
+SV_group <- ifelse(SV_gene_sizes_intersect$SV_per_gene[GC_ind]>0 & SV_gene_sizes_intersect$SV_per_gene[Other_ind]==0, "GC only", 
+                   ifelse(SV_gene_sizes_intersect$SV_per_gene[GC_ind]>0 & SV_gene_sizes_intersect$SV_per_gene[Other_ind]>0, "Shared", 
+                          ifelse(SV_gene_sizes_intersect$SV_per_gene[GC_ind]==0 & SV_gene_sizes_intersect$SV_per_gene[Other_ind]>0, "Other only", "Zero")))
+table(SV_group)
+SV_gene_sizes_grouped_df <- data.frame(SV_gene_sizes_intersect[duplicated(SV_gene_sizes_intersect$gene),c(1,3)], row.names = NULL)
+SV_gene_sizes_grouped_df$SV_group <- SV_group
+SV_gene_sizes_grouped_df <- SV_gene_sizes_grouped_df %>% filter(SV_group!="Zero")
+SV_gene_sizes_grouped_df$gene_length <- log(SV_gene_sizes_grouped_df$gene_length)
+library("RColorBrewer")
+pdf("SV_gene_sizes_grouped_df.pdf", width = 5, height = 5.5)
+par(font.axis = 2)
+boxplot(gene_length~SV_group, data = SV_gene_sizes_grouped_df, font=2, pch=20, cex.axis=1.2, las=1, xlab="", ylab="", col=brewer.pal(n = 3, name = "RdBu"))
+dev.off()
+library(rstatix)
+SV_stat <- wilcox_test(gene_length~SV_group, data = SV_gene_sizes_grouped_df)
+write.xlsx(SV_stat, file="SV_stat.Wilcox.test.xlsx")
+
+
+#MUT intersect with genes
+MUT_gene_sizes_intersect <- na.omit(readr::read_tsv("MUT_gene_sizes_intersect.bed", col_names = F)) 
+MUT_gene_sizes_intersect$X1[grep("chrX", MUT_gene_sizes_intersect$X1, ignore.case = T)] <- "chrX"
+MUT_gene_sizes_intersect <- MUT_gene_sizes_intersect %>% distinct()
+View(MUT_gene_sizes_intersect)
+#table(MUT_gene_sizes_intersect$X8)
+gene <- MUT_gene_sizes_intersect$X4
+gene_length <- MUT_gene_sizes_intersect$X3-MUT_gene_sizes_intersect$X2
+Cancer_group <- MUT_gene_sizes_intersect$X7
+MUT_per_gene <- MUT_gene_sizes_intersect$X8
+MUT_gene_sizes_intersect <- data.frame(cbind(gene, gene_length, Cancer_group, MUT_per_gene))
+MUT_gene_sizes_intersect$gene_length <- as.numeric(MUT_gene_sizes_intersect$gene_length)
+MUT_gene_sizes_intersect$MUT_per_gene <- as.numeric(MUT_gene_sizes_intersect$MUT_per_gene)
+str(MUT_gene_sizes_intersect)
+#View(MUT_gene_sizes_intersect)
+MUT_gene_sizes_intersect <- MUT_gene_sizes_intersect %>% group_by(gene, Cancer_group) %>% summarise(gene_length=sum(gene_length), MUT_per_gene=sum(MUT_per_gene))
+View(MUT_gene_sizes_intersect)
+GC_ind <- seq(1,nrow(MUT_gene_sizes_intersect),2)
+Other_ind <- seq(2,nrow(MUT_gene_sizes_intersect),2)
+MUT_group <- ifelse(MUT_gene_sizes_intersect$MUT_per_gene[GC_ind]>0 & MUT_gene_sizes_intersect$MUT_per_gene[Other_ind]==0, "GC only", 
+                   ifelse(MUT_gene_sizes_intersect$MUT_per_gene[GC_ind]>0 & MUT_gene_sizes_intersect$MUT_per_gene[Other_ind]>0, "Shared", 
+                          ifelse(MUT_gene_sizes_intersect$MUT_per_gene[GC_ind]==0 & MUT_gene_sizes_intersect$MUT_per_gene[Other_ind]>0, "Other only", "Zero")))
+table(MUT_group)
+MUT_gene_sizes_grouped_df <- data.frame(MUT_gene_sizes_intersect[duplicated(MUT_gene_sizes_intersect$gene),c(1,3)], row.names = NULL)
+MUT_gene_sizes_grouped_df$MUT_group <- MUT_group
+MUT_gene_sizes_grouped_df <- MUT_gene_sizes_grouped_df %>% filter(MUT_group!="Zero")
+MUT_gene_sizes_grouped_df$gene_length <- log(MUT_gene_sizes_grouped_df$gene_length)
+library("RColorBrewer")
+pdf("MUT_gene_sizes_grouped_df.pdf", width = 5, height = 5.5)
+par(font.axis = 2)
+boxplot(gene_length~MUT_group, data = MUT_gene_sizes_grouped_df, ylim=c(4,16),font=2, pch=20, cex.axis=1.2, las=1, xlab="", ylab="", col=brewer.pal(n = 3, name = "RdBu"))
+dev.off()
+library(rstatix)
+MUT_stat <- wilcox_test(gene_length~MUT_group, data = MUT_gene_sizes_grouped_df)
+write.xlsx(MUT_stat, file="MUT_stat.Wilcox.test.xlsx")
+
+
+#Check how many mutations/SV per gene?
+#SV
+SV_per_gene_other_cancers <- na.omit(readr::read_tsv("SV_OTHER_cancers_cosmic.genic", col_names = F))
+Cancer <- SV_per_gene_other_cancers$X5
+Count_per_gene <- SV_per_gene_other_cancers$X7
+Cancer_group <- rep("Other cancers", nrow(SV_per_gene_other_cancers))
+Genic_group <- ifelse(Count_per_gene>0, "genic", "Intergenic")
+SV_group <- SV_per_gene_other_cancers$X4
+SV_freq_other_cancers <- data.frame(Cancer, Cancer_group, SV_group, Count_per_gene, Genic_group)
+
+SV_per_gene_GC <- na.omit(readr::read_tsv("SV_GC_wang2014.genic", col_names = F))
+Cancer <- SV_per_gene_GC$X5
+Count_per_gene <- SV_per_gene_GC$X7
+Cancer_group <- rep("Gastric cancer", nrow(SV_per_gene_GC))
+Genic_group <- ifelse(Count_per_gene>0, "genic", "Intergenic")
+SV_group <- SV_per_gene_GC$X4
+SV_freq_GC <- data.frame(Cancer, Cancer_group, SV_group, Count_per_gene, Genic_group)
+
+SV_per_gene_Random <- na.omit(readr::read_tsv("SV_Random_sites.genic", col_names = F))
+Cancer <- SV_per_gene_Random$X5
+Count_per_gene <- SV_per_gene_Random$X7
+Cancer_group <- rep("Random sites", nrow(SV_per_gene_GC))
+Genic_group <- ifelse(Count_per_gene>0, "genic", "Intergenic")
+SV_group <- SV_per_gene_Random$X4
+SV_freq_Random <- data.frame(Cancer, Cancer_group, SV_group, Count_per_gene, Genic_group)
+SV_freq_per_gene <- rbind(SV_freq_GC,SV_freq_other_cancers,SV_freq_Random)
+View(SV_freq_per_gene)
+save(SV_freq_per_gene, file="SV_freq_per_gene.Rdata")
+
+#MUT
+MUT_per_gene_other_cancers <- na.omit(readr::read_tsv("OTHER_cancers_MUT_cosmic.genic", col_names = F))
+Cancer <- MUT_per_gene_other_cancers$X5
+Count_per_gene <- MUT_per_gene_other_cancers$X7
+Cancer_group <- rep("Other cancers", nrow(MUT_per_gene_other_cancers))
+Genic_group <- ifelse(Count_per_gene>0, "genic", "Intergenic")
+MUT_group <- MUT_per_gene_other_cancers$X4
+MUT_freq_other_cancers <- data.frame(Cancer, Cancer_group, MUT_group, Count_per_gene, Genic_group)
+
+MUT_per_gene_GC <- na.omit(readr::read_tsv("GC_MUT_cosmic.genic", col_names = F))
+Cancer <- MUT_per_gene_GC$X5
+Count_per_gene <- MUT_per_gene_GC$X7
+Cancer_group <- rep("Gastric cancer", nrow(MUT_per_gene_GC))
+Genic_group <- ifelse(Count_per_gene>0, "genic", "Intergenic")
+MUT_group <- MUT_per_gene_GC$X4
+MUT_freq_GC <- data.frame(Cancer, Cancer_group, MUT_group, Count_per_gene, Genic_group)
+
+MUT_per_gene_Random <- na.omit(readr::read_tsv("MUT_Random_sites.genic", col_names = F))
+Cancer <- MUT_per_gene_Random$X5
+Count_per_gene <- MUT_per_gene_Random$X7
+Cancer_group <- rep("Random sites", nrow(MUT_per_gene_GC))
+Genic_group <- ifelse(Count_per_gene>0, "genic", "Intergenic")
+MUT_group <- MUT_per_gene_Random$X4
+MUT_freq_Random <- data.frame(Cancer, Cancer_group, MUT_group, Count_per_gene, Genic_group)
+MUT_freq_per_gene <- rbind(MUT_freq_GC,MUT_freq_other_cancers,MUT_freq_Random)
+View(MUT_freq_per_gene)
+save(MUT_freq_per_gene, file="MUT_freq_per_gene.Rdata")
