@@ -89,7 +89,8 @@ dev.off()
 library(rstatix)
 SV_stat <- wilcox_test(gene_length~SV_group, data = SV_gene_sizes_grouped_df)
 write.xlsx(SV_stat, file="SV_stat.Wilcox.test.xlsx")
-
+# SV_GC_only <- SV_gene_sizes_grouped_df %>% filter(SV_group=="GC only")
+# save(SV_GC_only, file="SV_GC_only.Rdata")
 
 #MUT intersect with genes
 MUT_gene_sizes_intersect <- na.omit(readr::read_tsv("MUT_gene_sizes_intersect.bed", col_names = F)) 
@@ -137,7 +138,6 @@ Cancer_group <- rep("Other cancers", nrow(SV_per_gene_other_cancers))
 Genic_group <- ifelse(Count_per_gene>0, "genic", "Intergenic")
 SV_group <- SV_per_gene_other_cancers$X4
 SV_freq_other_cancers <- data.frame(Cancer, Cancer_group, SV_group, Count_per_gene, Genic_group)
-
 SV_per_gene_GC <- na.omit(readr::read_tsv("SV_GC_wang2014.genic", col_names = F))
 Cancer <- SV_per_gene_GC$X5
 Count_per_gene <- SV_per_gene_GC$X7
@@ -145,7 +145,6 @@ Cancer_group <- rep("Gastric cancer", nrow(SV_per_gene_GC))
 Genic_group <- ifelse(Count_per_gene>0, "genic", "Intergenic")
 SV_group <- SV_per_gene_GC$X4
 SV_freq_GC <- data.frame(Cancer, Cancer_group, SV_group, Count_per_gene, Genic_group)
-
 SV_per_gene_Random <- na.omit(readr::read_tsv("SV_Random_sites.genic", col_names = F))
 Cancer <- SV_per_gene_Random$X5
 Count_per_gene <- SV_per_gene_Random$X7
@@ -165,7 +164,6 @@ Cancer_group <- rep("Other cancers", nrow(MUT_per_gene_other_cancers))
 Genic_group <- ifelse(Count_per_gene>0, "genic", "Intergenic")
 MUT_group <- MUT_per_gene_other_cancers$X4
 MUT_freq_other_cancers <- data.frame(Cancer, Cancer_group, MUT_group, Count_per_gene, Genic_group)
-
 MUT_per_gene_GC <- na.omit(readr::read_tsv("GC_MUT_cosmic.genic", col_names = F))
 Cancer <- MUT_per_gene_GC$X5
 Count_per_gene <- MUT_per_gene_GC$X7
@@ -173,7 +171,6 @@ Cancer_group <- rep("Gastric cancer", nrow(MUT_per_gene_GC))
 Genic_group <- ifelse(Count_per_gene>0, "genic", "Intergenic")
 MUT_group <- MUT_per_gene_GC$X4
 MUT_freq_GC <- data.frame(Cancer, Cancer_group, MUT_group, Count_per_gene, Genic_group)
-
 MUT_per_gene_Random <- na.omit(readr::read_tsv("MUT_Random_sites.genic", col_names = F))
 Cancer <- MUT_per_gene_Random$X5
 Count_per_gene <- MUT_per_gene_Random$X7
@@ -184,3 +181,9 @@ MUT_freq_Random <- data.frame(Cancer, Cancer_group, MUT_group, Count_per_gene, G
 MUT_freq_per_gene <- rbind(MUT_freq_GC,MUT_freq_other_cancers,MUT_freq_Random)
 View(MUT_freq_per_gene)
 save(MUT_freq_per_gene, file="MUT_freq_per_gene.Rdata")
+
+#Plot percentage of MUT/SV - ingenic/outgenic in GC, Other Cancers and random sites
+str(SV_freq_per_gene)
+SV_freq_per_gene %>% group_by(Cancer_group,Genic_group) %>% summarise(Genic_group_count=n())
+MUT_freq_per_gene %>% group_by(Cancer_group,Genic_group) %>% summarise(Genic_group_count=n())
+
