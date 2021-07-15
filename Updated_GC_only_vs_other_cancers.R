@@ -189,6 +189,7 @@ write.xlsx(prostate_other_stat, file="prostate_other_stat.xlsx")
 #Data frame of 'Only" genes - not shared
 Merged_genes_sizes <- rbind(GC_sizes_genes, breast_sizes_genes, ovary_sizes_genes, prostate_sizes_genes)
 save(Merged_genes_sizes, file="Merged_genes_sizes.Rdata")
+table(Merged_genes_sizes$SV_group)
 
 #Merge the data with transcriprion data
 RNAseq_data <- openxlsx::read.xlsx("AGS_RANAseq_transcription.xlsx")
