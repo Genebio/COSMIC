@@ -52,6 +52,7 @@ SV_gene_sizes_intersect$SV_per_gene <- as.numeric(SV_gene_sizes_intersect$SV_per
 str(SV_gene_sizes_intersect)
 #View(SV_gene_sizes_intersect)
 SV_gene_sizes_intersect <- SV_gene_sizes_intersect %>% group_by(gene, Cancer_group) %>% summarise(gene_length=sum(gene_length), SV_per_gene=sum(SV_per_gene))
+head(SV_gene_sizes_intersect)
 GC_ind <- seq(1,nrow(SV_gene_sizes_intersect),2)
 Other_ind <- seq(2,nrow(SV_gene_sizes_intersect),2)
 SV_group <- ifelse(SV_gene_sizes_intersect$SV_per_gene[GC_ind]>0 & SV_gene_sizes_intersect$SV_per_gene[Other_ind]==0, "GC only", 
@@ -186,7 +187,41 @@ prostate_other_stat <- wilcox_test(gene_length~SV_group, data = SV_gene_sizes_gr
 write.xlsx(prostate_other_stat, file="prostate_other_stat.xlsx")
 
 #Data frame of 'Only" genes - not shared
-#Make sure the genes are really unique
 Merged_genes_sizes <- rbind(GC_sizes_genes, breast_sizes_genes, ovary_sizes_genes, prostate_sizes_genes)
 save(Merged_genes_sizes, file="Merged_genes_sizes.Rdata")
 
+#Merge the data with transcriprion data
+RNAseq_data <- openxlsx::read.xlsx("AGS_RANAseq_transcription.xlsx")
+head(RNAseq_data)
+gene_length <- RNAseq_data$end-RNAseq_data$start
+RNAseq_genes_transcription <- data.frame(gene=RNAseq_data$gene_name, gene_length=log(gene_length), transcription=log(rowMeans(RNAseq_data[,9:10]+1)))
+RNAseq_genes_transcription <- RNAseq_genes_transcription[na.omit(match(toupper(SV_gene_sizes_grouped_df$gene), toupper(RNAseq_genes_transcription$gene))),]
+Group <- SV_gene_sizes_grouped_df$SV_group[SV_gene_sizes_grouped_df$gene%in%RNAseq_data$gene_name]
+RNAseq_genes_transcription$Group <- Group
+table(RNAseq_genes_transcription$Group)
+
+# RNAseq_data <- openxlsx::read.xlsx("AGS_RANAseq_transcription.xlsx")
+# head(RNAseq_data)
+# RNAseq_genes_transcription <- data.frame(gene=RNAseq_data$gene_name, transcription=log(rowMeans(RNAseq_data[,9:10]+1)))
+# na.omit(match(SV_gene_sizes_grouped_df$gene, RNAseq_genes_transcription$gene))
+# Transcription <- RNAseq_genes_transcription$transcription[na.omit(match(toupper(SV_gene_sizes_grouped_df$gene), toupper(RNAseq_genes_transcription$gene)))]
+# Merged_genes_sizes_matched <- SV_gene_sizes_grouped_df[SV_gene_sizes_grouped_df$gene%in%RNAseq_data$gene_name,]
+# Merged_genes_sizes_matched$Transcription <- Transcription
+# Merged_genes_sizes_transcription <- Merged_genes_sizes_matched
+# save(Merged_genes_sizes_transcription, file="Merged_genes_sizes_transcription.Rdata")
+# table(Merged_genes_sizes_transcription$SV_group)
+
+# Merged_genes_sizes_transcription$SV_group <- ifelse(Merged_genes_sizes_transcription$SV_group=="GC only", "GC only", "Other")
+# #Make a nice scatterplot of gene_length to expression by cancer type
+# SV_gene_sizes_grouped_df$SV_group <- ifelse(SV_gene_sizes_grouped_df$SV_group=="GC only", "GC only", "Other")
+x=RNAseq_genes_transcription
+head(x)
+gcind=which(x[,4]=="GC only")
+ind=c(gcind,sample(which(x[,4]=="Other"),length(gcind)))
+data=x[ind,c(2,3)]
+label=x[ind,4]
+cols=rep("black",length(label))
+cols[label=="GC only"]="red3"
+pdf("GC_only_other_transcription.pdf")
+plot(data[,1],data[,2],col=cols,pch=20,xlab="Gene Size (log(bp))",ylab="Transcription (log(#reads))",cex.lab=1.4,cex.axis=1.4)
+dev.off()
