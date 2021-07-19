@@ -115,3 +115,59 @@ group <- ifelse(TArep$X8[gcind]>0 & TArep$X8[other_ind]==0, "GC only",
 group <- group[group!="Zero"]
 freq <- round(table(group)*100/sum(table(group)))
 freq
+
+#Find overlap with REP_clean
+REP <- readr::read_tsv("REP_FLANK.5000_GC_types_other_SV.bed", col_names = F)
+head(REP)
+GC_intestinal_overlapped <- round(sum(REP$X8[seq(1,nrow(REP),5)]>0)*100/length(seq(1,nrow(REP),5)),1)
+GC_intestinal_overlapped
+GC_other_overlapped <- round(sum(REP$X8[seq(2,nrow(REP),5)]>0)*100/length(seq(2,nrow(REP),5)),1)
+GC_other_overlapped
+breast_overlapped <- round(sum(REP$X8[seq(3,nrow(REP),5)]>0)*100/length(seq(3,nrow(REP),5)),1)
+breast_overlapped
+ovary_overlapped <- round(sum(REP$X8[seq(4,nrow(REP),5)]>0)*100/length(seq(4,nrow(REP),5)),1)
+ovary_overlapped
+prostate_overlapped <- round(sum(REP$X8[seq(5,nrow(REP),5)]>0)*100/length(seq(5,nrow(REP),5)),1)
+prostate_overlapped
+
+##Find overlap with REP intergenic
+REP_intergenic <- readr::read_tsv("REP_intergenic_FLANK.5000_GC_types_other_SV.bed", col_names = F)
+head(REP_intergenic)
+GC_intestinal_overlapped <- round(sum(REP_intergenic$X8[seq(1,nrow(REP_intergenic),5)]>0)*100/length(seq(1,nrow(REP_intergenic),5)),1)
+GC_intestinal_overlapped
+GC_other_overlapped <- round(sum(REP_intergenic$X8[seq(2,nrow(REP_intergenic),5)]>0)*100/length(seq(2,nrow(REP_intergenic),5)),1)
+GC_other_overlapped
+breast_overlapped <- round(sum(REP_intergenic$X8[seq(3,nrow(REP_intergenic),5)]>0)*100/length(seq(3,nrow(REP_intergenic),5)),1)
+breast_overlapped
+ovary_overlapped <- round(sum(REP_intergenic$X8[seq(4,nrow(REP_intergenic),5)]>0)*100/length(seq(4,nrow(REP_intergenic),5)),1)
+ovary_overlapped
+prostate_overlapped <- round(sum(REP_intergenic$X8[seq(5,nrow(REP_intergenic),5)]>0)*100/length(seq(5,nrow(REP_intergenic),5)),1)
+prostate_overlapped
+
+##Find overlap with TSS
+TSS <- readr::read_tsv("TSS_FLANK.5000_GC_types_other_SV.bed", col_names = F)
+head(TSS)
+GC_intestinal_overlapped <- round(sum(TSS$X8[seq(1,nrow(TSS),5)]>0)*100/length(seq(1,nrow(TSS),5)),1)
+GC_intestinal_overlapped
+GC_other_overlapped <- round(sum(TSS$X8[seq(2,nrow(TSS),5)]>0)*100/length(seq(2,nrow(TSS),5)),1)
+GC_other_overlapped
+breast_overlapped <- round(sum(TSS$X8[seq(3,nrow(TSS),5)]>0)*100/length(seq(3,nrow(TSS),5)),1)
+breast_overlapped
+ovary_overlapped <- round(sum(TSS$X8[seq(4,nrow(TSS),5)]>0)*100/length(seq(4,nrow(TSS),5)),1)
+ovary_overlapped
+prostate_overlapped <- round(sum(TSS$X8[seq(5,nrow(TSS),5)]>0)*100/length(seq(5,nrow(TSS),5)),1)
+prostate_overlapped
+
+##Find overlap with TES
+TES <- readr::read_tsv("TES_FLANK.5000_GC_types_other_SV.bed", col_names = F)
+head(TES)
+GC_intestinal_overlapped <- round(sum(TES$X8[seq(1,nrow(TES),5)]>0)*100/length(seq(1,nrow(TES),5)),1)
+GC_intestinal_overlapped
+GC_other_overlapped <- round(sum(TES$X8[seq(2,nrow(TES),5)]>0)*100/length(seq(2,nrow(TES),5)),1)
+GC_other_overlapped
+breast_overlapped <- round(sum(TES$X8[seq(3,nrow(TES),5)]>0)*100/length(seq(3,nrow(TES),5)),1)
+breast_overlapped
+ovary_overlapped <- round(sum(TES$X8[seq(4,nrow(TES),5)]>0)*100/length(seq(4,nrow(TES),5)),1)
+ovary_overlapped
+prostate_overlapped <- round(sum(TES$X8[seq(5,nrow(TES),5)]>0)*100/length(seq(5,nrow(TES),5)),1)
+prostate_overlapped
