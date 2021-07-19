@@ -38,6 +38,20 @@ unique(prostate_SV$Chr)
 
 #Check chromosomes in REP files
 
+#HG19 reference genes
+HG19_genes_check <- readr::read_tsv("HG19.GENES.bed", col_names = F)
+unique(HG19_genes_check$X1)
+for (i in 1:23){
+  if (any(grepl(paste0("chr",i,"_"),HG19_genes_check$X1))){
+    HG19_genes_check$X1[grep(paste0("chr",i,"_"),HG19_genes_check$X1)] <- paste0("chr",i)
+  }}
+HG19_genes_check$X1[grep("chrUn",HG19_genes_check$X1)] <- "chrM"
+HG19_genes_check$X1[grep("chrX",HG19_genes_check$X1)] <- "chrX"
+HG19_genes_check$X1[grep("chrY",HG19_genes_check$X1)] <- "chrY"
+HG19_genes_check <- HG19_genes_check %>% filter(!X1%in%c("chrX","chrY","chrM","chrMT"))
+unique(HG19_genes_check$X1)
+write.table(HG19_genes_check, file="HG19_genes.HG19_clean.bed", sep="\t", quote = F, row.names = F, col.names = F)
+
 #REP
 REP_check <- readr::read_tsv("REP.HG19.bed", col_names = F)
 unique(REP_check$X1)
