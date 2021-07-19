@@ -36,4 +36,58 @@ prostate_SV <- SV_OTHER_cancers_cosmic_bed %>% filter(Cancer_type=="prostate", C
 write.table(prostate_SV, file="prostate_SV.bed", sep="\t", quote = F, row.names = F, col.names = F)
 unique(prostate_SV$Chr)
 
+#Check chromosomes in REP files
 
+#REP
+REP_check <- readr::read_tsv("REP.HG19.bed", col_names = F)
+unique(REP_check$X1)
+for (i in 1:23){
+  if (any(grepl(paste0("chr",i,"_"),REP_check$X1))){
+    REP_check$X1[grep(paste0("chr",i,"_"),REP_check$X1)] <- paste0("chr",i)
+  }}
+REP_check$X1[grep("chrUn",REP_check$X1)] <- "chrM"
+REP_check$X1[grep("chrX",REP_check$X1)] <- "chrX"
+REP_check$X1[grep("chrY",REP_check$X1)] <- "chrY"
+REP_check <- REP_check %>% filter(!X1%in%c("chrX","chrY","chrM","chrMT"))
+unique(REP_check$X1)
+write.table(REP_check, file="REP.HG19_clean.bed", sep="\t", quote = F, row.names = F, col.names = F)
+
+#polyA
+polyA_check <- readr::read_tsv("Arep.HG19.bed", col_names = F)
+unique(polyA_check$X1)
+polyA_check <- polyA_check %>% filter(!X1%in%c("chrX","chrY"))
+unique(polyA_check$X1)
+write.table(polyA_check, file="polyA.HG19_clean.bed", sep="\t", quote = F, row.names = F, col.names = F)
+
+#polyTA
+polyTA_check <- readr::read_tsv("TArep.HG19.bed", col_names = F)
+unique(polyTA_check$X1)
+polyTA_check <- polyTA_check %>% filter(!X1%in%c("chrX","chrY"))
+unique(polyTA_check$X1)
+write.table(polyTA_check, file="polyTA.HG19_clean.bed", sep="\t", quote = F, row.names = F, col.names = F)
+
+#TSS
+TSS_check <- readr::read_tsv("TSS.HG19.bed", col_names = F)
+for (i in 1:23){
+  if (any(grepl(paste0("chr",i,"_"),TSS_check$X1))){
+    TSS_check$X1[grep(paste0("chr",i,"_"),TSS_check$X1)] <- paste0("chr",i)
+  }}
+TSS_check$X1[grep("chrUn",TSS_check$X1)] <- "chrM"
+TSS_check$X1[grep("chrX",TSS_check$X1)] <- "chrX"
+TSS_check$X1[grep("chrY",TSS_check$X1)] <- "chrY"
+TSS_check <- TSS_check %>% filter(!X1%in%c("chrX","chrY","chrM"))
+unique(TSS_check$X1)
+write.table(TSS_check, file="TSS.HG19_clean.bed", sep="\t", quote = F, row.names = F, col.names = F)
+
+#TES
+TES_check <- readr::read_tsv("TES.HG19.bed", col_names = F)
+for (i in 1:23){
+  if (any(grepl(paste0("chr",i,"_"),TES_check$X1))){
+    TES_check$X1[grep(paste0("chr",i,"_"),TES_check$X1)] <- paste0("chr",i)
+  }}
+TES_check$X1[grep("chrUn",TES_check$X1)] <- "chrM"
+TES_check$X1[grep("chrX",TES_check$X1)] <- "chrX"
+TES_check$X1[grep("chrY",TES_check$X1)] <- "chrY"
+TES_check <- TES_check %>% filter(!X1%in%c("chrX","chrY","chrM"))
+unique(TES_check$X1)
+write.table(TES_check, file="TES.HG19_clean.bed", sep="\t", quote = F, row.names = F, col.names = F)
