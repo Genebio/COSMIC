@@ -130,6 +130,8 @@ ovary_overlapped <- round(sum(REP$X8[seq(4,nrow(REP),5)]>0)*100/length(seq(4,nro
 ovary_overlapped
 prostate_overlapped <- round(sum(REP$X8[seq(5,nrow(REP),5)]>0)*100/length(seq(5,nrow(REP),5)),1)
 prostate_overlapped
+REP_df <- data.frame(Type="REP", GC_intestinal=GC_intestinal_overlapped, GC_diffuse_mixed=GC_other_overlapped, 
+                  breast=breast_overlapped,ovary=ovary_overlapped, prostate=prostate_overlapped)
 
 ##Find overlap with REP intergenic
 REP_intergenic <- readr::read_tsv("REP_intergenic_FLANK.5000_GC_types_other_SV.bed", col_names = F)
@@ -144,6 +146,8 @@ ovary_overlapped <- round(sum(REP_intergenic$X8[seq(4,nrow(REP_intergenic),5)]>0
 ovary_overlapped
 prostate_overlapped <- round(sum(REP_intergenic$X8[seq(5,nrow(REP_intergenic),5)]>0)*100/length(seq(5,nrow(REP_intergenic),5)),1)
 prostate_overlapped
+REP_intergenic_df <- data.frame(Type="REP_intergenic", GC_intestinal=GC_intestinal_overlapped, GC_diffuse_mixed=GC_other_overlapped, 
+                     breast=breast_overlapped,ovary=ovary_overlapped, prostate=prostate_overlapped)
 
 ##Find overlap with TSS
 TSS <- readr::read_tsv("TSS_FLANK.5000_GC_types_other_SV.bed", col_names = F)
@@ -158,6 +162,8 @@ ovary_overlapped <- round(sum(TSS$X8[seq(4,nrow(TSS),5)]>0)*100/length(seq(4,nro
 ovary_overlapped
 prostate_overlapped <- round(sum(TSS$X8[seq(5,nrow(TSS),5)]>0)*100/length(seq(5,nrow(TSS),5)),1)
 prostate_overlapped
+TSS_df <- data.frame(Type="TSS", GC_intestinal=GC_intestinal_overlapped, GC_diffuse_mixed=GC_other_overlapped, 
+                                breast=breast_overlapped,ovary=ovary_overlapped, prostate=prostate_overlapped)
 
 ##Find overlap with TES
 TES <- readr::read_tsv("TES_FLANK.5000_GC_types_other_SV.bed", col_names = F)
@@ -172,6 +178,8 @@ ovary_overlapped <- round(sum(TES$X8[seq(4,nrow(TES),5)]>0)*100/length(seq(4,nro
 ovary_overlapped
 prostate_overlapped <- round(sum(TES$X8[seq(5,nrow(TES),5)]>0)*100/length(seq(5,nrow(TES),5)),1)
 prostate_overlapped
+TES_df <- data.frame(Type="TES", GC_intestinal=GC_intestinal_overlapped, GC_diffuse_mixed=GC_other_overlapped, 
+                     breast=breast_overlapped,ovary=ovary_overlapped, prostate=prostate_overlapped)
 
 ##Find overlap with polyTA
 polyTA <- readr::read_tsv("polyTA_FLANK.5000_GC_types_other_SV.bed", col_names = F)
@@ -186,6 +194,8 @@ ovary_overlapped <- round(sum(polyTA$X8[seq(4,nrow(polyTA),5)]>0)*100/length(seq
 ovary_overlapped
 prostate_overlapped <- round(sum(polyTA$X8[seq(5,nrow(polyTA),5)]>0)*100/length(seq(5,nrow(polyTA),5)),1)
 prostate_overlapped
+polyTA_df <- data.frame(Type="polyA/T", GC_intestinal=GC_intestinal_overlapped, GC_diffuse_mixed=GC_other_overlapped, 
+                     breast=breast_overlapped,ovary=ovary_overlapped, prostate=prostate_overlapped)
 
 ##Find overlap with polyA
 polyA <- readr::read_tsv("polyA_FLANK.5000_GC_types_other_SV.bed", col_names = F)
@@ -200,3 +210,7 @@ ovary_overlapped <- round(sum(polyA$X8[seq(4,nrow(polyA),5)]>0)*100/length(seq(4
 ovary_overlapped
 prostate_overlapped <- round(sum(polyA$X8[seq(5,nrow(polyA),5)]>0)*100/length(seq(5,nrow(polyA),5)),1)
 prostate_overlapped
+polyA_df <- data.frame(Type="polyA", GC_intestinal=GC_intestinal_overlapped, GC_diffuse_mixed=GC_other_overlapped, 
+                        breast=breast_overlapped,ovary=ovary_overlapped, prostate=prostate_overlapped)
+Rep_fraction_overlap_5kb_df <- rbind(REP_df, REP_intergenic_df, polyTA_df, polyA_df, TSS_df, TES_df)
+save(Rep_fraction_overlap_5kb_df, file="Rep_fraction_overlap_5kb_df.Rdata")
