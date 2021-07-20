@@ -116,6 +116,7 @@ group <- group[group!="Zero"]
 freq <- round(table(group)*100/sum(table(group)))
 freq
 
+###########################################################################
 #Find overlap with REP_clean
 REP <- readr::read_tsv("REP_FLANK.5000_GC_types_other_SV.bed", col_names = F)
 head(REP)
@@ -170,4 +171,32 @@ breast_overlapped
 ovary_overlapped <- round(sum(TES$X8[seq(4,nrow(TES),5)]>0)*100/length(seq(4,nrow(TES),5)),1)
 ovary_overlapped
 prostate_overlapped <- round(sum(TES$X8[seq(5,nrow(TES),5)]>0)*100/length(seq(5,nrow(TES),5)),1)
+prostate_overlapped
+
+##Find overlap with polyTA
+polyTA <- readr::read_tsv("polyTA_FLANK.5000_GC_types_other_SV.bed", col_names = F)
+head(polyTA)
+GC_intestinal_overlapped <- round(sum(polyTA$X8[seq(1,nrow(polyTA),5)]>0)*100/length(seq(1,nrow(polyTA),5)),1)
+GC_intestinal_overlapped
+GC_other_overlapped <- round(sum(polyTA$X8[seq(2,nrow(polyTA),5)]>0)*100/length(seq(2,nrow(polyTA),5)),1)
+GC_other_overlapped
+breast_overlapped <- round(sum(polyTA$X8[seq(3,nrow(polyTA),5)]>0)*100/length(seq(3,nrow(polyTA),5)),1)
+breast_overlapped
+ovary_overlapped <- round(sum(polyTA$X8[seq(4,nrow(polyTA),5)]>0)*100/length(seq(4,nrow(polyTA),5)),1)
+ovary_overlapped
+prostate_overlapped <- round(sum(polyTA$X8[seq(5,nrow(polyTA),5)]>0)*100/length(seq(5,nrow(polyTA),5)),1)
+prostate_overlapped
+
+##Find overlap with polyA
+polyA <- readr::read_tsv("polyA_FLANK.5000_GC_types_other_SV.bed", col_names = F)
+head(polyA)
+GC_intestinal_overlapped <- round(sum(polyA$X8[seq(1,nrow(polyA),5)]>0)*100/length(seq(1,nrow(polyA),5)),1)
+GC_intestinal_overlapped
+GC_other_overlapped <- round(sum(polyA$X8[seq(2,nrow(polyA),5)]>0)*100/length(seq(2,nrow(polyA),5)),1)
+GC_other_overlapped
+breast_overlapped <- round(sum(polyA$X8[seq(3,nrow(polyA),5)]>0)*100/length(seq(3,nrow(polyA),5)),1)
+breast_overlapped
+ovary_overlapped <- round(sum(polyA$X8[seq(4,nrow(polyA),5)]>0)*100/length(seq(4,nrow(polyA),5)),1)
+ovary_overlapped
+prostate_overlapped <- round(sum(polyA$X8[seq(5,nrow(polyA),5)]>0)*100/length(seq(5,nrow(polyA),5)),1)
 prostate_overlapped
