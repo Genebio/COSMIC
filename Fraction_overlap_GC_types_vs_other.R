@@ -48,7 +48,7 @@ for (i in 1:23){
 HG19_genes_check$X1[grep("chrUn",HG19_genes_check$X1)] <- "chrM"
 HG19_genes_check$X1[grep("chrX",HG19_genes_check$X1)] <- "chrX"
 HG19_genes_check$X1[grep("chrY",HG19_genes_check$X1)] <- "chrY"
-HG19_genes_check <- HG19_genes_check %>% filter(!X1%in%c("chrX","chrY","chrM","chrMT"))
+HG19_genes_check <- HG19_genes_check %>% filter(!X1%in%c("chrX","chrY","chrM","chrMT")) %>% distinct()
 unique(HG19_genes_check$X1)
 write.table(HG19_genes_check, file="HG19_genes.HG19_clean.bed", sep="\t", quote = F, row.names = F, col.names = F)
 
@@ -62,21 +62,23 @@ for (i in 1:23){
 REP_check$X1[grep("chrUn",REP_check$X1)] <- "chrM"
 REP_check$X1[grep("chrX",REP_check$X1)] <- "chrX"
 REP_check$X1[grep("chrY",REP_check$X1)] <- "chrY"
-REP_check <- REP_check %>% filter(!X1%in%c("chrX","chrY","chrM","chrMT"))
+REP_check <- REP_check %>% filter(!X1%in%c("chrX","chrY","chrM","chrMT")) %>% distinct()
+nrow(REP_check)
+nrow(REP_check %>% distinct())
 unique(REP_check$X1)
 write.table(REP_check, file="REP.HG19_clean.bed", sep="\t", quote = F, row.names = F, col.names = F)
 
 #polyA
 polyA_check <- readr::read_tsv("Arep.HG19.bed", col_names = F)
 unique(polyA_check$X1)
-polyA_check <- polyA_check %>% filter(!X1%in%c("chrX","chrY"))
+polyA_check <- polyA_check %>% filter(!X1%in%c("chrX","chrY")) %>% distinct()
 unique(polyA_check$X1)
 write.table(polyA_check, file="polyA.HG19_clean.bed", sep="\t", quote = F, row.names = F, col.names = F)
 
 #polyTA
 polyTA_check <- readr::read_tsv("TArep.HG19.bed", col_names = F)
 unique(polyTA_check$X1)
-polyTA_check <- polyTA_check %>% filter(!X1%in%c("chrX","chrY"))
+polyTA_check <- polyTA_check %>% filter(!X1%in%c("chrX","chrY"))%>% distinct()
 unique(polyTA_check$X1)
 write.table(polyTA_check, file="polyTA.HG19_clean.bed", sep="\t", quote = F, row.names = F, col.names = F)
 
@@ -89,7 +91,7 @@ for (i in 1:23){
 TSS_check$X1[grep("chrUn",TSS_check$X1)] <- "chrM"
 TSS_check$X1[grep("chrX",TSS_check$X1)] <- "chrX"
 TSS_check$X1[grep("chrY",TSS_check$X1)] <- "chrY"
-TSS_check <- TSS_check %>% filter(!X1%in%c("chrX","chrY","chrM"))
+TSS_check <- TSS_check %>% filter(!X1%in%c("chrX","chrY","chrM")) %>% distinct()
 unique(TSS_check$X1)
 write.table(TSS_check, file="TSS.HG19_clean.bed", sep="\t", quote = F, row.names = F, col.names = F)
 
@@ -102,6 +104,6 @@ for (i in 1:23){
 TES_check$X1[grep("chrUn",TES_check$X1)] <- "chrM"
 TES_check$X1[grep("chrX",TES_check$X1)] <- "chrX"
 TES_check$X1[grep("chrY",TES_check$X1)] <- "chrY"
-TES_check <- TES_check %>% filter(!X1%in%c("chrX","chrY","chrM"))
+TES_check <- TES_check %>% filter(!X1%in%c("chrX","chrY","chrM"))%>% distinct()
 unique(TES_check$X1)
 write.table(TES_check, file="TES.HG19_clean.bed", sep="\t", quote = F, row.names = F, col.names = F)
